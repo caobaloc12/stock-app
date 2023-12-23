@@ -67,13 +67,17 @@ const useQuoteLatest = (symbol: string) => {
       }
     }
 
-    getPreviousClose()
+    if (symbol) {
+      getPreviousClose()
+    }
   }, [symbol])
 
   useEffect(() => {
     const getQuoteLatest = async () => {
       try {
         setLoading(true)
+
+        // current price plan doesn't support
         const { results } = await polyClient.stocks.lastQuote(symbol)
         console.log('getQuoteLatest', { results })
         // setQuoteLatest(results)

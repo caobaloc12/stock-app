@@ -8,10 +8,10 @@ interface Props {
 
 const RelatedStocks = ({ tickers }: Props) => {
   return (
-    <section>
+    <>
       <SectionTitle title='Related Stocks' />
       <div className='mt-[18px]'>Lorem, ipsum.</div>
-    </section>
+    </>
   )
 }
 

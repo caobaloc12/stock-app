@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useMemo } from 'react'
 
 import useTickerDetails from '@/app/hooks/useTickerDetails'
 
@@ -11,7 +11,7 @@ import Description from './components/Description'
 import Tags from './components/Tags'
 import RelatedStocks from './components/RelatedStocks'
 import { Spinner } from '@/app/components'
-import useQuoteLatest from '@/app/hooks/useQuoteLatest'
+import useChartData from '@/app/hooks/useChartData'
 
 interface SymbolDetailPageProps {
   params: {
@@ -19,10 +19,48 @@ interface SymbolDetailPageProps {
   }
 }
 
+const getPrices = (prevPrices: any, curPrices: any) => {
+  if (!prevPrices || !curPrices) return {}
+
+  const prevPrice = prevPrices?.value
+  const currentPrice = curPrices?.value
+  const priceChange = currentPrice - prevPrice
+  const percentChange = (priceChange / prevPrice) * 100
+  return {
+    currentPrice,
+    priceChange,
+    percentChange,
+    isPriceUp: priceChange > 0,
+  }
+}
+
 const SymbolDetailPage = ({ params }: SymbolDetailPageProps) => {
   const { ticker: symbol } = params
   const { tickerDetails, loading, error } = useTickerDetails(symbol)
-  const quoteData = useQuoteLatest(symbol)
+  const chartState = useChartData(symbol)
+
+  // Because the current price plan doesn't support this api
+  // Therefore, we need to calculate the quote data from the chart data
+  // by compared the last 2 items of the chart data
+  const priceQuote = useMemo(() => {
+    if (!chartState?.chartData || !Array.isArray(chartState?.chartData))
+      return {}
+
+    const last2Items = chartState.chartData.slice(-2)
+    const prevItem = last2Items[0]
+    const currentItem = last2Items[1]
+
+    const { currentPrice, priceChange, percentChange, isPriceUp } = getPrices(
+      prevItem,
+      currentItem
+    )
+    return {
+      currentPrice,
+      priceChange,
+      percentChange,
+      isPriceUp,
+    }
+  }, [chartState?.chartData])
 
   if (loading) {
     return (
@@ -33,10 +71,8 @@ const SymbolDetailPage = ({ params }: SymbolDetailPageProps) => {
   }
   if (error) return <div>Error...</div>
 
-  console.log({ tickerDetails })
-
   return (
-    <div className='px-[30px] py-[26px]'>
+    <div className='px-[30px] pt-7 pb-20'>
       <h1 className='font-medium text-[22px] leading-none'>
         {symbol}
         <span className='font-normal text-[18px] leading-[22px] ml-3'>
@@ -44,12 +80,22 @@ const SymbolDetailPage = ({ params }: SymbolDetailPageProps) => {
         </span>
       </h1>
       <div className='flex flex-col gap-y-10'>
-        <PriceDetails tickerDetails={tickerDetails} />
-        <Chart symbol={tickerDetails?.ticker} />
+        <PriceDetails priceQuote={priceQuote} />
+        <Chart chartState={chartState} />
         <About tickerDetails={tickerDetails} />
-        <Description description={tickerDetails?.description} />
-        <Tags tags={[]} />
-        <RelatedStocks tickers={[]} />
+        <div className='lg:grid lg:grid-cols-2 lg:gap-x-12 lg:gap-y-4 lg:grid-flow-col'>
+          <section>
+            <Description description={tickerDetails?.description} />
+          </section>
+          <div>
+            <section className='mb-10'>
+              <Tags tags={[]} />
+            </section>
+            <section>
+              <RelatedStocks tickers={[]} />
+            </section>
+          </div>
+        </div>
       </div>
     </div>
   )

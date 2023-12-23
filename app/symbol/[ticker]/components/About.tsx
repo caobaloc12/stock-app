@@ -1,6 +1,7 @@
 import React, { useMemo, memo } from 'react'
 import SectionTitle from './SectionTitle'
 import { ITickerDetails } from '@polygon.io/client-js'
+import { formatPhoneNumber } from '@/app/utils/common'
 
 interface AboutProps {
   tickerDetails: ITickerDetails['results']
@@ -48,43 +49,29 @@ const About = ({ tickerDetails }: AboutProps) => {
       .join(', ')}`
   }, [tickerDetails?.address])
 
-  const phoneNumber = useMemo(() => {
-    const _phone = tickerDetails?.phone_number
-
-    if (!_phone) return 'N/A'
-
-    // format US phone number
-    const cleaned = ('' + _phone).replace(/\D/g, '')
-    const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/)
-
-    if (match) {
-      return '(' + match[1] + ') ' + match[2] + '-' + match[3]
-    }
-
-    return 'N/A'
-  }, [tickerDetails?.phone_number])
-
   return (
     <section>
       <SectionTitle title={`About ${tickerDetails?.ticker}`} />
-      <div className='flex justify-between flex-wrap gap-2 text-[12px]'>
-        <div className='flex flex-col gap-y-1 leading-[16px] mt-[14px]'>
-          {details.map((item) => (
-            <DetailItem
-              key={item.label}
-              label={item.label}
-              value={item.value}
-            />
-          ))}
+      <div className='flex justify-between flex-wrap gap-2 text-[12px] lg:text-base lg:grid lg:grid-cols-2 lg:gap-x-12'>
+        <div className='flex gap-4 flex-wrap'>
+          <div className='flex flex-col gap-y-1 mt-[14px]'>
+            {details.map((item) => (
+              <DetailItem
+                key={item.label}
+                label={item.label}
+                value={item.value}
+              />
+            ))}
+          </div>
+          <div className=''>
+            <p className='mb-3'>
+              {address} <br />
+              United States
+            </p>
+            <p>{formatPhoneNumber(tickerDetails?.phone_number || '')}</p>
+          </div>
         </div>
-        <div>
-          <p className='mb-3'>
-            {address} <br />
-            United States
-          </p>
-          <p>{phoneNumber}</p>
-        </div>
-        <div className='w-full flex items-center justify-center flex-grow max-w-[600px] h-[148px] bg-gray-100 rounded-md'>
+        <div className='w-full flex items-center justify-center flex-grow max-w-[600px] h-[148px] bg-gray-100 rounded-md lg:h-[240px]'>
           Google Map Placeholder
         </div>
       </div>

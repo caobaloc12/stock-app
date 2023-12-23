@@ -1,3 +1,7 @@
+export const formatNumber = (number: number) => {
+  return number.toFixed(2)
+}
+
 /**
  * Formats the given price as a currency string in USD.
  *
@@ -18,4 +22,18 @@ export const formatPrice = (price: number) => {
  */
 export const formatPercent = (percent: number) => {
   return `${percent > 0 ? '+' : ''}${percent.toFixed(2)}%`
+}
+
+export const formatPhoneNumber = (phone: string) => {
+  if (!phone) return 'N/A'
+
+  // US format
+  const cleaned = ('' + phone).replace(/\D/g, '')
+  const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/)
+
+  if (match) {
+    return '(' + match[1] + ') ' + match[2] + '-' + match[3]
+  }
+
+  return 'N/A'
 }

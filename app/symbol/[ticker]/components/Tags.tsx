@@ -8,10 +8,10 @@ interface Props {
 
 const Tags = ({ tags }: Props) => {
   return (
-    <section>
+    <>
       <SectionTitle title='Tags' />
       <div className='mt-[18px]'>Lorem, ipsum.</div>
-    </section>
+    </>
   )
 }
 

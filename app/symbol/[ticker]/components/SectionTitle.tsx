@@ -8,7 +8,9 @@ const SectionTitle = ({
   className?: string
 }) => {
   return (
-    <h2 className={`font-medium text-[16px] leading-[20px] ${className}`}>
+    <h2
+      className={`font-medium text-[16px] leading-[20px] lg:text-[18px] ${className}`}
+    >
       {title}
     </h2>
   )
