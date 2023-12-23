@@ -1,1 +1,2 @@
-export { default as StockChart } from './StockChart'
+export { default as AppHeader } from './Header'
+export { default as Spinner } from './Spinner'
