@@ -2,6 +2,7 @@ import React, { useMemo, memo } from 'react'
 import SectionTitle from './SectionTitle'
 import { ITickerDetails } from '@polygon.io/client-js'
 import { formatNumberWithCommas, formatPhoneNumber } from '@/app/utils/common'
+import { Map } from '@/app/components'
 
 interface AboutProps {
   tickerDetails: ITickerDetails['results']
@@ -51,6 +52,15 @@ const About = ({ tickerDetails }: AboutProps) => {
       .join(', ')}`
   }, [tickerDetails?.address])
 
+  // get correct address format: Street Number + Street Name + (Street Type) + City + (State) + Zip Code from tickerDetails.address
+  const mapAddress = useMemo(() => {
+    const { address1, city, postal_code, state } = tickerDetails?.address || {}
+
+    return `${[address1, city, `${state || ''} ${postal_code || ''}`]
+      .filter(Boolean)
+      .join(', ')}`
+  }, [tickerDetails?.address])
+
   return (
     <section>
       <SectionTitle title={`About ${tickerDetails?.ticker}`} />
@@ -77,8 +87,8 @@ const About = ({ tickerDetails }: AboutProps) => {
             )}
           </div>
         </div>
-        <div className='w-full flex items-center justify-center flex-grow max-w-[600px] h-[148px] bg-gray-100 rounded-md lg:h-[240px]'>
-          Google Map Placeholder
+        <div className='w-full flex items-center justify-center flex-grow max-w-[600px] h-[148px] lg:h-[240px]'>
+          <Map address={mapAddress} width='100%' height='100%' />
         </div>
       </div>
     </section>
