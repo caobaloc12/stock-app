@@ -21,7 +21,7 @@ export const formatPrice = (price: number) => {
  * @returns The formatted percentage string.
  */
 export const formatPercent = (percent: number) => {
-  return `${percent > 0 ? '+' : ''}${percent.toFixed(2)}%`
+  return `${percent.toFixed(2)}%`
 }
 
 export const formatPhoneNumber = (phone: string) => {
@@ -36,4 +36,9 @@ export const formatPhoneNumber = (phone: string) => {
   }
 
   return 'N/A'
+}
+
+// format number with commas in thousands
+export const formatNumberWithCommas = (number: number) => {
+  return number.toLocaleString('en-US')
 }

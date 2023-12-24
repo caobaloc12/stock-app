@@ -40,10 +40,10 @@ const SymbolDetailPage = ({ params }: SymbolDetailPageProps) => {
   const chartState = useChartData(symbol)
 
   // Because the current price plan doesn't support this api
-  // Therefore, we need to calculate the quote data from the chart data
+  // Therefore, I need to calculate the quote data from the chart data
   // by compared the last 2 items of the chart data
   const priceQuote = useMemo(() => {
-    if (!chartState?.chartData || !Array.isArray(chartState?.chartData))
+    if (!chartState?.chartData || !Array.isArray(chartState.chartData))
       return {}
 
     const last2Items = chartState.chartData.slice(-2)
@@ -69,7 +69,13 @@ const SymbolDetailPage = ({ params }: SymbolDetailPageProps) => {
       </div>
     )
   }
-  if (error) return <div>Error...</div>
+
+  if (error)
+    return (
+      <div className='w-full h-screen flex justify-center items-center text-red-800'>
+        An error occurred. Please try again later.
+      </div>
+    )
 
   return (
     <div className='px-[30px] pt-7 pb-20'>
@@ -81,18 +87,20 @@ const SymbolDetailPage = ({ params }: SymbolDetailPageProps) => {
       </h1>
       <div className='flex flex-col gap-y-10'>
         <PriceDetails priceQuote={priceQuote} />
-        <Chart chartState={chartState} />
+        <Chart chartState={chartState} isPriceUp={priceQuote?.isPriceUp} />
         <About tickerDetails={tickerDetails} />
         <div className='lg:grid lg:grid-cols-2 lg:gap-x-12 lg:gap-y-4 lg:grid-flow-col'>
           <section>
             <Description description={tickerDetails?.description} />
           </section>
-          <div>
-            <section className='mb-10'>
-              <Tags tags={[]} />
+          <div className='flex flex-col gap-y-10'>
+            <section className='lg:order-2'>
+              <Tags tags={['automotive', 'consumer_discretionary']} />
             </section>
-            <section>
-              <RelatedStocks tickers={[]} />
+            <section className='lg:order-1'>
+              <RelatedStocks
+                relatedStocks={tickerDetails?.related_stocks || []}
+              />
             </section>
           </div>
         </div>

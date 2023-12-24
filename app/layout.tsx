@@ -23,8 +23,15 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={roboto.className}>
-        <AppHeader />
-        <div className='container mx-auto'>{children}</div>
+        <div className='flex justify-start items-stretch h-screen w-full'>
+          <aside className='hidden lg:flex lg:flex-none lg:justify-center lg:items-start lg:w-[72px] lg:h-screen lg:bg-[#B6B7C3] lg:pt-4'>
+            <div className='w-[35px] h-[35px] rounded-full bg-[#001458]' />
+          </aside>
+          <div className='w-full overflow-y-auto'>
+            <AppHeader />
+            <div className='container mx-auto'>{children}</div>
+          </div>
+        </div>
       </body>
     </html>
   )

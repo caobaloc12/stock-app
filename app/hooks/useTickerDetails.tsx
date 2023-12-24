@@ -6,7 +6,9 @@ import polyClient from '@/app/lib/polyClient'
 import { USE_MOCK } from '@/app/utils/constants'
 import * as mockApi from '@/app/__mocks__/server'
 
-type TickerDetailsResult = ITickerDetails['results']
+type TickerDetailsResult = ITickerDetails['results'] & {
+  related_stocks?: any[]
+}
 
 const useTickerDetails = (symbol: string) => {
   const [tickerDetails, setTickerDetails] = useState<TickerDetailsResult>()
@@ -20,7 +22,13 @@ const useTickerDetails = (symbol: string) => {
         const { results } = USE_MOCK
           ? await mockApi.getTickerDetails()
           : await polyClient.reference.tickerDetails(symbol)
-        results && setTickerDetails(results)
+        results &&
+          setTickerDetails({
+            ...results,
+            related_stocks: USE_MOCK
+              ? (await mockApi.getRelatedStocks())?.results
+              : [],
+          })
       } catch (error) {
         console.error('Error fetching tickers data:', error)
         setError(true)
@@ -30,7 +38,6 @@ const useTickerDetails = (symbol: string) => {
     }
 
     if (symbol) {
-      console.log('get ticker details: ', symbol)
       getTickerDetails()
     }
   }, [symbol])

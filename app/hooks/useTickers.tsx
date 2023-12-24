@@ -24,7 +24,7 @@ interface TickersResults {
 type AdditionalQuery = Omit<ITickersQuery, 'search'>
 
 const useTickers = (search: string, additionalQuery?: AdditionalQuery) => {
-  const [tickers, setTickers] = useState<TickersResults[]>([])
+  const [tickers, setTickers] = useState<TickersResults[] | undefined>()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
 
@@ -35,7 +35,7 @@ const useTickers = (search: string, additionalQuery?: AdditionalQuery) => {
         const { results } = await polyClient.reference.tickers({
           search,
           market: 'stocks',
-          limit: search ? 50 : 20,
+          limit: 50,
           ...(additionalQuery || {}),
         })
         setTickers(results)
@@ -47,7 +47,9 @@ const useTickers = (search: string, additionalQuery?: AdditionalQuery) => {
       }
     }
 
-    getTickers()
+    if (search) {
+      getTickers()
+    }
   }, [search, additionalQuery])
 
   return { tickers, loading, error }

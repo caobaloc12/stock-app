@@ -1,0 +1,26 @@
+{
+  "request_id": "",
+  "results": [
+    {
+      "ticker": "TTM",
+      "name": "Titan Minerals Ltd",
+      "priceChange": 0.002
+    },
+    {
+      "ticker": "WKHS",
+      "name": "Workhorse Group Inc",
+      "priceChange": -0.005
+    },
+    {
+      "ticker": "NIO",
+      "name": "Nio Inc",
+      "priceChange": 0.14
+    },
+    {
+      "ticker": "NKLA",
+      "name": "Nikola Corporation",
+      "priceChange": 0.056
+    }
+  ],
+  "status": "success"
+}

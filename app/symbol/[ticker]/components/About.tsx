@@ -1,7 +1,7 @@
 import React, { useMemo, memo } from 'react'
 import SectionTitle from './SectionTitle'
 import { ITickerDetails } from '@polygon.io/client-js'
-import { formatPhoneNumber } from '@/app/utils/common'
+import { formatNumberWithCommas, formatPhoneNumber } from '@/app/utils/common'
 
 interface AboutProps {
   tickerDetails: ITickerDetails['results']
@@ -35,7 +35,9 @@ const About = ({ tickerDetails }: AboutProps) => {
       },
       {
         label: 'Employees',
-        value: tickerDetails?.total_employees?.toString(),
+        value: tickerDetails?.total_employees
+          ? formatNumberWithCommas(tickerDetails?.total_employees)
+          : '-',
       },
     ],
     [tickerDetails]
@@ -54,7 +56,7 @@ const About = ({ tickerDetails }: AboutProps) => {
       <SectionTitle title={`About ${tickerDetails?.ticker}`} />
       <div className='flex justify-between flex-wrap gap-2 text-[12px] lg:text-base lg:grid lg:grid-cols-2 lg:gap-x-12'>
         <div className='flex gap-4 flex-wrap'>
-          <div className='flex flex-col gap-y-1 mt-[14px]'>
+          <div className='flex flex-col gap-y-1 mt-[14px] min-w-[200px] xl:min-w-[300px]'>
             {details.map((item) => (
               <DetailItem
                 key={item.label}
@@ -63,12 +65,16 @@ const About = ({ tickerDetails }: AboutProps) => {
               />
             ))}
           </div>
-          <div className=''>
+          <div className='min-w-[200px] xl:min-w-[300px]'>
             <p className='mb-3'>
               {address} <br />
               United States
             </p>
-            <p>{formatPhoneNumber(tickerDetails?.phone_number || '')}</p>
+            {tickerDetails?.phone_number && (
+              <a href={`tel:${tickerDetails.phone_number}`}>
+                {formatPhoneNumber(tickerDetails.phone_number)}
+              </a>
+            )}
           </div>
         </div>
         <div className='w-full flex items-center justify-center flex-grow max-w-[600px] h-[148px] bg-gray-100 rounded-md lg:h-[240px]'>

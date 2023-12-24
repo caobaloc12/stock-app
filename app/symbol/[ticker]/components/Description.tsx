@@ -1,32 +1,43 @@
 import React, { useState } from 'react'
 
 import SectionTitle from './SectionTitle'
+import { ChevronDownIcon, ChevronUpIcon } from '@/app/components/Icon'
 
 interface Props {
   description?: string
 }
 
-const MAX_LENGTH = 500
-
 const Description = ({ description }: Props) => {
   const [collapsed, setCollapsed] = useState(true)
-
-  const displayText = collapsed
-    ? `${description?.slice(0, MAX_LENGTH)}...`
-    : description
 
   return (
     <>
       <SectionTitle title='Description' />
-      <div className='text-[12px] leading-[18px] mt-3 lg:text-base'>
-        {displayText}
-      </div>
-      <span
-        className='cursor-pointer mt-6 text-blue-400'
-        onClick={() => setCollapsed(!collapsed)}
-      >
-        {collapsed ? 'Read more' : 'Read less'}
-      </span>
+      {description && (
+        <>
+          <div
+            className={`text-[12px] leading-[18px] mt-3 lg:text-base ${
+              collapsed ? 'line-clamp-6' : ''
+            }`}
+          >
+            {description}
+          </div>
+          <div className='flex justify-center'>
+            <span
+              className='cursor-pointer'
+              tabIndex={0}
+              role='button'
+              onClick={() => setCollapsed(!collapsed)}
+            >
+              {collapsed ? (
+                <ChevronDownIcon color='#141111' size={24} />
+              ) : (
+                <ChevronUpIcon color='#141111' size={24} />
+              )}
+            </span>
+          </div>
+        </>
+      )}
     </>
   )
 }

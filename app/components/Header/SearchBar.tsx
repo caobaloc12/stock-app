@@ -1,10 +1,11 @@
 'use client'
 
-import React, { useState, useEffect, useRef, ReactNode } from 'react'
+import React, { useState, useRef, ReactNode, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
 import useDebounce from '@/app/hooks/useDebounce'
 import useTickers from '@/app/hooks/useTickers'
+import useClickOutside from '@/app/hooks/useClickOutside'
 import { SearchIcon } from '@/app/components/Icon'
 import DropdownPlaceholder from './DropdownPlaceholder'
 
@@ -22,17 +23,15 @@ const SearchBar = () => {
   const debouncedValue = useDebounce(inputValue, 500)
   const { tickers, loading, error } = useTickers(debouncedValue)
 
+  useClickOutside(ref, () => {
+    setVisible(false)
+  })
+
   useEffect(() => {
-    const handleClickOutside = (event: any) => {
-      if (ref.current && !(ref.current as any)?.contains(event.target)) {
-        setVisible(false)
-      }
+    if (tickers && tickers.length > 0) {
+      setVisible(true)
     }
-    document.addEventListener('click', handleClickOutside)
-    return () => {
-      document.removeEventListener('click', handleClickOutside)
-    }
-  }, [ref])
+  }, [tickers])
 
   const handleInputChange = (event: any) => {
     setInputValue(event.target.value)
@@ -73,7 +72,7 @@ const SearchBar = () => {
 
     return (
       <>
-        {tickers.length > 0 ? (
+        {Array.isArray(tickers) && tickers.length > 0 ? (
           <Wrapper>
             <ul className='pt-4 flex flex-col'>
               {tickers.map((item) => (
@@ -115,7 +114,6 @@ const SearchBar = () => {
         className='w-full h-7 pl-11 pr-4 focus:outline-none'
         value={inputValue}
         onChange={handleInputChange}
-        onFocus={() => setVisible(true)}
       />
 
       {renderDropdown()}

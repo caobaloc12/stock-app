@@ -18,7 +18,11 @@ const PriceDetails = ({ priceQuote }: PriceDetailsProps) => {
       </div>
       <div
         className={`flex justify-start items-center gap-x-2 text-[18px] leading-6 ${
-          priceQuote?.isPriceUp ? 'text-[#58D38C]' : 'text-[#E51616]'
+          priceQuote?.priceChange
+            ? priceQuote?.isPriceUp
+              ? 'text-[#58D38C]'
+              : 'text-[#E51616]'
+            : 'text-[#141111]'
         }`}
       >
         <span>
@@ -28,18 +32,16 @@ const PriceDetails = ({ priceQuote }: PriceDetailsProps) => {
               : formatNumber(priceQuote.priceChange)
             : '--'}
         </span>
-        <span className='flex justify-start items-center gap-x-0.5'>
-          {priceQuote?.isPriceUp ? (
-            <ArrowUpIcon color='#58D38C' size={18} />
-          ) : (
-            <ArrowDownIcon color='#E51616' size={18} />
-          )}
-          <span>
-            {priceQuote?.percentChange
-              ? formatPercent(priceQuote.percentChange)
-              : '--'}
+        {priceQuote?.percentChange && (
+          <span className='flex justify-start items-center gap-x-0.5'>
+            {priceQuote?.isPriceUp ? (
+              <ArrowUpIcon color='#58D38C' size={18} />
+            ) : (
+              <ArrowDownIcon color='#E51616' size={18} />
+            )}
+            <span>{formatPercent(priceQuote.percentChange)}</span>
           </span>
-        </span>
+        )}
       </div>
     </div>
   )

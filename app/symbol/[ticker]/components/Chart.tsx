@@ -9,9 +9,10 @@ import { Spinner } from '@/app/components'
 interface StockChartProps {
   symbol?: string
   chartState?: any
+  isPriceUp?: boolean
 }
 
-const StockChart: React.FC<StockChartProps> = ({ chartState, symbol }) => {
+const StockChart: React.FC<StockChartProps> = ({ chartState, isPriceUp }) => {
   const { chartData, loading } = chartState || {}
 
   const chartContainerRef = useRef<any>()
@@ -19,10 +20,14 @@ const StockChart: React.FC<StockChartProps> = ({ chartState, symbol }) => {
   useEffect(() => {
     const colors = {
       backgroundColor: 'white',
-      lineColor: '#2962FF',
-      textColor: 'black',
-      areaTopColor: 'rgba(41, 98, 255, 0.58)',
-      areaBottomColor: 'rgba(41, 98, 255, 0.04)',
+      lineColor: isPriceUp ? '#58D38C' : '#E51616',
+      textColor: '#141111',
+      areaTopColor: isPriceUp
+        ? 'rgba(88, 211, 140, 0.36)'
+        : 'rgba(229, 22, 22, 0.36)',
+      areaBottomColor: isPriceUp
+        ? 'rgba(88, 211, 140, 0.01)'
+        : 'rgba(229, 22, 22, 0.01)',
     }
     const handleResize = () => {
       chartContainerRef?.current &&
@@ -38,9 +43,23 @@ const StockChart: React.FC<StockChartProps> = ({ chartState, symbol }) => {
       },
       width: chartContainerRef?.current?.clientWidth,
       height: 300,
+      handleScale: false,
+      handleScroll: false,
+      grid: {
+        vertLines: {
+          visible: false,
+        },
+      },
+      timeScale: {
+        borderColor: '#CECED0',
+      },
+      rightPriceScale: {
+        borderVisible: false,
+      },
     })
     chart.timeScale().fitContent()
     const newSeries = chart.addAreaSeries({
+      lineWidth: 2,
       lineColor: colors.lineColor,
       topColor: colors.areaTopColor,
       bottomColor: colors.areaBottomColor,
@@ -57,7 +76,7 @@ const StockChart: React.FC<StockChartProps> = ({ chartState, symbol }) => {
 
       chart.remove()
     }
-  }, [chartData])
+  }, [chartData, isPriceUp])
 
   const renderContent = () => {
     if (loading) {
@@ -71,7 +90,10 @@ const StockChart: React.FC<StockChartProps> = ({ chartState, symbol }) => {
   }
 
   return (
-    <div ref={chartContainerRef} className='w-full min-h-[200px]'>
+    <div
+      ref={chartContainerRef}
+      className='w-full min-h-[200px] xl:max-w-[1366px]'
+    >
       {renderContent()}
     </div>
   )

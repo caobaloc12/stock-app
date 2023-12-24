@@ -1,16 +1,32 @@
 import React from 'react'
 
 import SectionTitle from './SectionTitle'
+import Tag from './Tag'
+import { useRouter } from 'next/navigation'
 
 interface Props {
-  tickers: any[]
+  relatedStocks: any[]
 }
 
-const RelatedStocks = ({ tickers }: Props) => {
+const RelatedStocks = ({ relatedStocks }: Props) => {
+  const router = useRouter()
   return (
     <>
       <SectionTitle title='Related Stocks' />
-      <div className='mt-[18px]'>Lorem, ipsum.</div>
+      {Array.isArray(relatedStocks) && relatedStocks.length > 0 && (
+        <div className='flex justify-start gap-2 flex-wrap mt-4'>
+          {relatedStocks.map((stock) => (
+            <Tag
+              key={stock?.ticker}
+              tag={stock?.ticker}
+              color={stock?.priceChange > 0 ? '#58D38C' : '#E83E3E'}
+              onClick={() => {
+                router.push(`/symbol/${stock?.ticker}`)
+              }}
+            />
+          ))}
+        </div>
+      )}
     </>
   )
 }
