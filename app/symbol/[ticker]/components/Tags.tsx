@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react'
 
 import { SECTOR_COLOR_MAP, SECTOR_LABEL_MAP } from '@/app/utils/constants'

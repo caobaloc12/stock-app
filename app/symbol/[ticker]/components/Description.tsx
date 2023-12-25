@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState } from 'react'
 
 import SectionTitle from './SectionTitle'
@@ -27,6 +29,7 @@ const Description = ({ description }: Props) => {
               className='cursor-pointer'
               tabIndex={0}
               role='button'
+              aria-label='Show more'
               onClick={() => setCollapsed(!collapsed)}
             >
               {collapsed ? (

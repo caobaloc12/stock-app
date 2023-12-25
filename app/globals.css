@@ -20,4 +20,46 @@ body {
   position: relative;
   background-color: #fcfcfc;
   color: #141111;
+  min-height: 100%;
+}
+
+/* drawer CSS */
+.drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease-in-out;
+  transform: translateX(-100%);
+}
+
+.drawer.open {
+  z-index: 999;
+  transform: translateX(0);
+}
+
+.drawer.closing {
+  transform: translateX(-100%);
+}
+
+.drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 999;
+}
+
+.drawer-content {
+  background-color: white;
+  height: 100%;
+  position: relative;
+  overflow-y: auto;
+  z-index: 1000;
+  padding: 40px 20px 20px;
 }

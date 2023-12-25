@@ -5,16 +5,20 @@ import React, { useEffect, useRef, memo } from 'react'
 import { createChart, ColorType } from 'lightweight-charts'
 
 import { Spinner } from '@/app/components'
+import { ChartDataType } from '@/app/types/common'
 
 interface StockChartProps {
   symbol?: string
-  chartState?: any
+  loading?: boolean
+  chartData?: ChartDataType[]
   isPriceUp?: boolean
 }
 
-const StockChart: React.FC<StockChartProps> = ({ chartState, isPriceUp }) => {
-  const { chartData, loading } = chartState || {}
-
+const StockChart: React.FC<StockChartProps> = ({
+  loading,
+  chartData,
+  isPriceUp,
+}) => {
   const chartContainerRef = useRef<any>()
 
   useEffect(() => {

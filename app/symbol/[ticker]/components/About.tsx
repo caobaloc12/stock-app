@@ -2,22 +2,25 @@ import React, { useMemo, memo } from 'react'
 import SectionTitle from './SectionTitle'
 import { ITickerDetails } from '@polygon.io/client-js'
 import { formatNumberWithCommas, formatPhoneNumber } from '@/app/utils/common'
-import { Map } from '@/app/components'
+import Map from './LazyMap'
 
 interface AboutProps {
   tickerDetails: ITickerDetails['results']
 }
 
-const DetailItem = memo(
-  ({ label, value }: { label: string; value?: string }) => {
-    return (
-      <div className='flex gap-x-1'>
-        <span>{label}:</span>
-        <span className='font-medium'>{value}</span>
-      </div>
-    )
-  }
-)
+interface DetailItemProps {
+  label: string
+  value?: string
+}
+
+const DetailItem = memo(({ label, value }: DetailItemProps) => {
+  return (
+    <div className='flex gap-x-1'>
+      <span>{label}:</span>
+      <span className='font-medium'>{value}</span>
+    </div>
+  )
+})
 
 const About = ({ tickerDetails }: AboutProps) => {
   const details = useMemo(
@@ -52,7 +55,7 @@ const About = ({ tickerDetails }: AboutProps) => {
       .join(', ')}`
   }, [tickerDetails?.address])
 
-  // get correct address format: Street Number + Street Name + (Street Type) + City + (State) + Zip Code from tickerDetails.address
+  // address format: Street Number + Street Name + (Street Type) + City + (State) + Zip Code from tickerDetails.address
   const mapAddress = useMemo(() => {
     const { address1, city, postal_code, state } = tickerDetails?.address || {}
 
@@ -75,21 +78,25 @@ const About = ({ tickerDetails }: AboutProps) => {
               />
             ))}
           </div>
-          <div className='min-w-[200px] xl:min-w-[300px]'>
-            <p className='mb-3'>
-              {address} <br />
-              United States
-            </p>
-            {tickerDetails?.phone_number && (
-              <a href={`tel:${tickerDetails.phone_number}`}>
-                {formatPhoneNumber(tickerDetails.phone_number)}
-              </a>
-            )}
+          {tickerDetails?.address && (
+            <div className='min-w-[200px] xl:min-w-[300px]'>
+              <p className='mb-3'>
+                {address} <br />
+                United States
+              </p>
+              {tickerDetails?.phone_number && (
+                <a href={`tel:${tickerDetails.phone_number}`}>
+                  {formatPhoneNumber(tickerDetails.phone_number)}
+                </a>
+              )}
+            </div>
+          )}
+        </div>
+        {tickerDetails?.address && (
+          <div className='w-full flex items-center justify-center flex-grow max-w-[600px] h-[148px] lg:h-[240px]'>
+            <Map address={mapAddress} width='100%' height='100%' />
           </div>
-        </div>
-        <div className='w-full flex items-center justify-center flex-grow max-w-[600px] h-[148px] lg:h-[240px]'>
-          <Map address={mapAddress} width='100%' height='100%' />
-        </div>
+        )}
       </div>
     </section>
   )

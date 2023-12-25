@@ -1,12 +1,12 @@
 import React from 'react'
 
-const HomePage = () => {
+export default function Page() {
   return (
-    <div className='w-full my-8 h-screen max-w-7xl mx-auto'>
-      HomePage
-      <p>Lorem ipsum dolor sit amet.</p>
+    <div className='p-8'>
+      <h1 className='font-bold text-lg'>Stock App</h1>
+      <p className='mt-4'>
+        Search for a stock symbol in the search bar above to get started.
+      </p>
     </div>
   )
 }
-
-export default HomePage

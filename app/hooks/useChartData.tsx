@@ -4,11 +4,7 @@ import { useEffect, useState } from 'react'
 
 import dayjs from 'dayjs'
 import polyClient from '@/app/lib/polyClient'
-
-type ChartDataType = {
-  time: string
-  value?: number
-}
+import { ChartDataType } from '@/app/types/common'
 
 const useChartData = (symbol?: string) => {
   const [chartData, setChartData] = useState<ChartDataType[]>([])

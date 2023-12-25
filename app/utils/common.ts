@@ -42,3 +42,24 @@ export const formatPhoneNumber = (phone: string) => {
 export const formatNumberWithCommas = (number: number) => {
   return number.toLocaleString('en-US')
 }
+
+export const polyAPIUrl = process.env.NEXT_PUBLIC_POLY_API_URL!
+
+export const getHeaders = () => {
+  const apiKey = process.env.NEXT_PUBLIC_POLY_API_KEY!
+  return {
+    Authorization: `Bearer ${apiKey}`,
+    'Content-Type': 'application/json',
+  }
+}
+
+/**
+ * Converts an object of query parameters into a string representation.
+ * @param params - The object containing the query parameters.
+ * @returns The string representation of the query parameters.
+ */
+export const stringifyQueryParams = (params: any) => {
+  return Object.keys(params)
+    .map((key) => `${key}=${params[key]}`)
+    .join('&')
+}

@@ -1,106 +1,121 @@
-'use client'
+import { Metadata, ResolvingMetadata } from 'next'
+import React from 'react'
 
-import React, { useMemo } from 'react'
+import { ITickerDetails, ITickers } from '@polygon.io/client-js'
+import {
+  getHeaders,
+  polyAPIUrl,
+  stringifyQueryParams,
+} from '@/app/utils/common'
+import PricesAndChart from './components/PricesAndChart'
 
-import useTickerDetails from '@/app/hooks/useTickerDetails'
-
-import PriceDetails from './components/PriceDetails'
-import Chart from './components/Chart'
 import About from './components/About'
 import Description from './components/Description'
 import Tags from './components/Tags'
 import RelatedStocks from './components/RelatedStocks'
-import { Spinner } from '@/app/components'
-import useChartData from '@/app/hooks/useChartData'
 
-interface SymbolDetailPageProps {
+interface PageProps {
   params: {
     ticker: string
   }
 }
 
-const getPrices = (prevPrices: any, curPrices: any) => {
-  if (!prevPrices || !curPrices) return {}
+const NOT_FOUND = 'NOT_FOUND'
 
-  const prevPrice = prevPrices?.value
-  const currentPrice = curPrices?.value
-  const priceChange = currentPrice - prevPrice
-  const percentChange = (priceChange / prevPrice) * 100
+const mockTags = ['automotive', 'consumer_discretionary']
+
+// use first sentence of ticker's description as meta description
+const getShortDescription = (description?: string): string | null =>
+  description ? `${description.split('. ')[0]}.` : null
+
+export async function generateMetadata(
+  { params: { ticker } }: PageProps,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const res = await fetch(`${polyAPIUrl}/v3/reference/tickers/${ticker}`, {
+    headers: getHeaders(),
+  })
+  const data: ITickerDetails = await res.json()
+  if (data.status === NOT_FOUND) {
+    return {
+      title: 'Ticker not found',
+    }
+  }
+
+  let _description = getShortDescription(data.results?.description)
+  // fallback to parent description
+  if (!_description) {
+    _description = (await parent).description
+  }
   return {
-    currentPrice,
-    priceChange,
-    percentChange,
-    isPriceUp: priceChange > 0,
+    title: `${data.results?.ticker} ${data.results?.name} | Stock App`,
+    description:
+      getShortDescription(data.results?.description) ||
+      (await parent).description,
   }
 }
 
-const SymbolDetailPage = ({ params }: SymbolDetailPageProps) => {
-  const { ticker: symbol } = params
-  const { tickerDetails, loading, error } = useTickerDetails(symbol)
-  const chartState = useChartData(symbol)
+async function getTickerDetails(symbol: string): Promise<ITickerDetails> {
+  const res = await fetch(`${polyAPIUrl}/v3/reference/tickers/${symbol}`, {
+    headers: getHeaders(),
+  })
+  return res.json()
+}
 
-  // Because the current price plan doesn't support this api
-  // Therefore, I need to calculate the quote data from the chart data
-  // by compared the last 2 items of the chart data
-  const priceQuote = useMemo(() => {
-    if (!chartState?.chartData || !Array.isArray(chartState.chartData))
-      return {}
+async function getRelatedStocks(tickerType: string): Promise<ITickers> {
+  const queryString = stringifyQueryParams({
+    type: tickerType,
+    market: 'stocks',
+    active: true,
+    sort: 'ticker',
+    limit: 5,
+  })
+  const res = await fetch(`${polyAPIUrl}/v3/reference/tickers?${queryString}`, {
+    headers: getHeaders(),
+  })
 
-    const last2Items = chartState.chartData.slice(-2)
-    const prevItem = last2Items[0]
-    const currentItem = last2Items[1]
+  return res.json()
+}
 
-    const { currentPrice, priceChange, percentChange, isPriceUp } = getPrices(
-      prevItem,
-      currentItem
-    )
-    return {
-      currentPrice,
-      priceChange,
-      percentChange,
-      isPriceUp,
-    }
-  }, [chartState?.chartData])
+async function Page({ params }: PageProps) {
+  const { results: tickerDetails } = await getTickerDetails(params.ticker)
+  let relatedStocks: ITickers['results'] = []
+  if (tickerDetails?.type) {
+    const { results } = await getRelatedStocks(tickerDetails.type)
+    relatedStocks = results.filter(({ ticker }) => ticker !== params.ticker)
+  }
 
-  if (loading) {
+  if (!tickerDetails) {
     return (
-      <div className='w-full h-screen flex justify-center items-center'>
-        <Spinner />
+      <div className='px-8 pt-8'>
+        <div className='text-lg'>Ticker not found.</div>
       </div>
     )
   }
 
-  if (error)
-    return (
-      <div className='w-full h-screen flex justify-center items-center text-red-800'>
-        An error occurred. Please try again later.
-      </div>
-    )
-
   return (
-    <div className='px-[30px] pt-7 pb-20'>
+    <div className='px-8 pt-8 pb-20'>
       <h1 className='font-medium text-[22px] leading-none'>
-        {symbol}
+        {tickerDetails.ticker}
         <span className='font-normal text-[18px] leading-[22px] ml-3'>
           {tickerDetails?.name}
         </span>
       </h1>
+
       <div className='flex flex-col gap-y-10'>
-        <PriceDetails priceQuote={priceQuote} />
-        <Chart chartState={chartState} isPriceUp={priceQuote?.isPriceUp} />
+        <PricesAndChart symbol={tickerDetails.ticker} />
         <About tickerDetails={tickerDetails} />
         <div className='lg:grid lg:grid-cols-2 lg:gap-x-12 lg:gap-y-4 lg:grid-flow-col'>
-          <section>
+          <section className='mb-10'>
             <Description description={tickerDetails?.description} />
           </section>
           <div className='flex flex-col gap-y-10'>
             <section className='lg:order-2'>
-              <Tags tags={['automotive', 'consumer_discretionary']} />
+              {/* TODO: use tags data from ticker details */}
+              <Tags tags={mockTags} />
             </section>
             <section className='lg:order-1'>
-              <RelatedStocks
-                relatedStocks={tickerDetails?.related_stocks || []}
-              />
+              <RelatedStocks relatedStocks={relatedStocks} />
             </section>
           </div>
         </div>
@@ -109,4 +124,4 @@ const SymbolDetailPage = ({ params }: SymbolDetailPageProps) => {
   )
 }
 
-export default SymbolDetailPage
+export default Page
