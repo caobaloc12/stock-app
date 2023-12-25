@@ -42,13 +42,17 @@ export async function generateMetadata(
     }
   }
 
+  const title = data.results
+    ? `${data.results?.ticker} ${data.results?.name}  | Stock App`
+    : (await parent).title
+
   let _description = getShortDescription(data.results?.description)
   // fallback to parent description
   if (!_description) {
     _description = (await parent).description
   }
   return {
-    title: `${data.results?.ticker} ${data.results?.name} | Stock App`,
+    title,
     description:
       getShortDescription(data.results?.description) ||
       (await parent).description,
