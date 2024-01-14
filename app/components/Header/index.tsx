@@ -31,12 +31,24 @@ const AppHeader = () => {
       <Drawer visible={visible} onClose={() => setVisible(false)}>
         <ul className='flex flex-col'>
           <li className='p-4 hover:bg-slate-50'>
-            <Link href='/' className='block'>
+            <Link
+              href='/'
+              className='block'
+              onClick={() => {
+                setVisible(false)
+              }}
+            >
               Home
             </Link>
           </li>
           <li className='p-4 hover:bg-slate-50'>
-            <Link href='/about' className='block'>
+            <Link
+              href='/about'
+              className='block'
+              onClick={() => {
+                setVisible(false)
+              }}
+            >
               About
             </Link>
           </li>
