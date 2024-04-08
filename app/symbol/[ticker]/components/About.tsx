@@ -2,7 +2,7 @@ import React, { useMemo, memo } from 'react'
 import SectionTitle from './SectionTitle'
 import { ITickerDetails } from '@polygon.io/client-js'
 import { formatNumberWithCommas, formatPhoneNumber } from '@/app/utils/common'
-import Map from './LazyMap'
+import Description from './Description'
 
 interface AboutProps {
   tickerDetails: ITickerDetails['results']
@@ -55,19 +55,13 @@ const About = ({ tickerDetails }: AboutProps) => {
       .join(', ')}`
   }, [tickerDetails?.address])
 
-  // address format: Street Number + Street Name + (Street Type) + City + (State) + Zip Code from tickerDetails.address
-  const mapAddress = useMemo(() => {
-    const { address1, city, postal_code, state } = tickerDetails?.address || {}
-
-    return `${[address1, city, `${state || ''} ${postal_code || ''}`]
-      .filter(Boolean)
-      .join(', ')}`
-  }, [tickerDetails?.address])
-
   return (
     <section>
       <SectionTitle title={`About ${tickerDetails?.ticker}`} />
       <div className='flex justify-between flex-wrap gap-2 text-[12px] lg:text-base lg:grid lg:grid-cols-2 lg:gap-x-12'>
+        <div>
+          <Description description={tickerDetails?.description} />
+        </div>
         <div className='flex gap-4 flex-wrap'>
           <div className='flex flex-col gap-y-1 mt-[14px] min-w-[200px] xl:min-w-[300px]'>
             {details.map((item) => (
@@ -92,11 +86,6 @@ const About = ({ tickerDetails }: AboutProps) => {
             </div>
           )}
         </div>
-        {tickerDetails?.address && (
-          <div className='w-full flex items-center justify-center flex-grow max-w-[600px] h-[148px] lg:h-[240px]'>
-            <Map address={mapAddress} width='100%' height='100%' />
-          </div>
-        )}
       </div>
     </section>
   )

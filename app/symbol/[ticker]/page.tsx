@@ -109,19 +109,14 @@ async function Page({ params }: PageProps) {
       <div className='flex flex-col gap-y-10'>
         <PricesAndChart symbol={tickerDetails.ticker} />
         <About tickerDetails={tickerDetails} />
-        <div className='lg:grid lg:grid-cols-2 lg:gap-x-12 lg:gap-y-4 lg:grid-flow-col'>
-          <section className='mb-10'>
-            <Description description={tickerDetails?.description} />
+        <div className='flex flex-col gap-y-10'>
+          <section className='lg:order-2'>
+            {/* TODO: use tags data from ticker details */}
+            <Tags tags={mockTags} />
           </section>
-          <div className='flex flex-col gap-y-10'>
-            <section className='lg:order-2'>
-              {/* TODO: use tags data from ticker details */}
-              <Tags tags={mockTags} />
-            </section>
-            <section className='lg:order-1'>
-              <RelatedStocks relatedStocks={relatedStocks} />
-            </section>
-          </div>
+          <section className='lg:order-1'>
+            <RelatedStocks relatedStocks={relatedStocks} />
+          </section>
         </div>
       </div>
     </div>
