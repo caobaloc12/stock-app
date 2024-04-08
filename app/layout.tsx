@@ -15,6 +15,9 @@ const roboto = Roboto({
 export const metadata: Metadata = {
   title: 'Stock App',
   description: 'Stock web application using Next.js and Polygon.io API',
+  other: {
+    'msvalidate.01': ['BFC3D28A208ABD13B830C34BA1E61CE3'],
+  },
 }
 
 export default function RootLayout({
