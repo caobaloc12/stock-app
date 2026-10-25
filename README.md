@@ -1,4 +1,4 @@
-"This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
 
@@ -40,4 +40,4 @@ Section này được thêm tự động qua **GitHub MCP server** để kiểm 
 - Repo: `caobaloc12/stock-app`
 - Branch: `main`
 - Mục đích: end-to-end test MCP write → commit → push
-- Nếu bạn đọc được dòng này trên GitHub, MCP đã hoạt động đúng."
+- Nếu bạn đọc được dòng này trên GitHub, MCP đã hoạt động đúng.
